@@ -24,12 +24,6 @@ Tamamen **HTML + CSS + vanilla JavaScript** ile yazıldı; framework, derleme ad
 
 > Proje tamamen statik olduğu için veritabanına (phpMyAdmin/MySQL) ihtiyaç duymaz.
 
-## GitHub Pages ile yayınlama
-
-1. Repoyu GitHub'a yükle.
-2. **Settings → Pages → Branch: `main` / root** seçeneğini kaydet.
-3. Birkaç dakika sonra site `https://kullaniciadi.github.io/repo-adi/` adresinde yayında olur.
-
 ## Dosya yapısı
 
 ```
