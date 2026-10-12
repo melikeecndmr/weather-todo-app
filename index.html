@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hava Durumlu Görev Takibi</title>
+  <meta name="description" content="Canlı hava durumuna göre görevlerini planlayan modern görev takip arayüzü. HTML, CSS ve vanilla JavaScript ile geliştirildi." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='12' fill='%23FDB813'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-sky="clear-day" data-kind="clear">
+  <div class="sky" aria-hidden="true"></div>
+  <div class="fx" aria-hidden="true"></div>
+  <div class="orb orb-a" aria-hidden="true"></div>
+  <div class="orb orb-b" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="26" height="26"><circle cx="26" cy="26" r="10" fill="#FDB813"/><g fill="#fff"><circle cx="30" cy="40" r="9"/><circle cx="41" cy="34" r="12"/><circle cx="51" cy="42" r="8"/><rect x="30" y="40" width="29" height="10" rx="5"/></g></svg>
+      </span>
+      <div>
+        <h1>SkyTasks</h1>
+        <p>Hava durumuna göre planla</p>
+      </div>
+    </div>
+    <time id="today" class="today"></time>
+  </header>
+
+  <main class="layout">
+    <!-- HAVA DURUMU -->
+    <section class="panel weather" aria-labelledby="wx-title">
+      <h2 id="wx-title" class="sr-only">Hava durumu</h2>
+
+      <form class="search" id="searchForm" autocomplete="off" role="search">
+        <div class="search-field">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/></svg>
+          <input id="cityInput" type="search" placeholder="Şehir ara…" aria-label="Şehir ara" aria-autocomplete="list" aria-controls="suggestions" />
+          <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
+        </div>
+        <button type="button" id="locateBtn" class="icon-btn" aria-label="Konumumu kullan" title="Konumumu kullan">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 2v4M12 18v4M2 12h4M18 12h4M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+        </button>
+      </form>
+
+      <div id="wxBody" class="wx-body" aria-live="polite">
+        <div class="skeleton hero-skel"></div>
+        <div class="skeleton row-skel"></div>
+        <div class="skeleton row-skel"></div>
+      </div>
+    </section>
+
+    <!-- GÖREVLER -->
+    <section class="panel tasks" aria-labelledby="tasks-title">
+      <div class="tasks-head">
+        <div>
+          <h2 id="tasks-title">Görevlerim</h2>
+          <p class="sub" id="progressText">0 / 0 tamamlandı</p>
+        </div>
+        <div class="ring" role="img" aria-label="Tamamlanma oranı">
+          <svg viewBox="0 0 64 64" width="64" height="64">
+            <circle class="ring-bg" cx="32" cy="32" r="26"/>
+            <circle class="ring-fg" id="ringFg" cx="32" cy="32" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/>
+          </svg>
+          <span id="ringPct">0%</span>
+        </div>
+      </div>
+
+      <form id="taskForm" class="task-form">
+        <input id="taskTitle" type="text" maxlength="90" placeholder="Yeni görev ekle…" aria-label="Görev başlığı" required />
+        <div class="form-row">
+          <div class="seg" role="radiogroup" aria-label="Görev türü">
+            <label><input type="radio" name="cat" value="indoor" checked /><span>🏠 İç mekan</span></label>
+            <label><input type="radio" name="cat" value="outdoor" /><span>🌳 Dış mekan</span></label>
+          </div>
+          <select id="taskPriority" aria-label="Öncelik">
+            <option value="low">Düşük öncelik</option>
+            <option value="medium" selected>Orta öncelik</option>
+            <option value="high">Yüksek öncelik</option>
+          </select>
+          <input id="taskDue" type="date" aria-label="Son tarih" />
+          <button type="submit" class="btn-primary">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+            Ekle
+          </button>
+        </div>
+      </form>
+
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Durum filtresi">
+          <button role="tab" class="tab is-active" data-filter="all" aria-selected="true">Tümü <b id="cAll">0</b></button>
+          <button role="tab" class="tab" data-filter="active" aria-selected="false">Aktif <b id="cActive">0</b></button>
+          <button role="tab" class="tab" data-filter="done" aria-selected="false">Biten <b id="cDone">0</b></button>
+        </div>
+        <div class="chips" aria-label="Tür filtresi">
+          <button class="chip is-active" data-cat="all">Hepsi</button>
+          <button class="chip" data-cat="outdoor">Dış mekan</button>
+          <button class="chip" data-cat="indoor">İç mekan</button>
+        </div>
+      </div>
+
+      <div class="search-tasks">
+        <input id="taskSearch" type="search" placeholder="Görevlerde ara…" aria-label="Görevlerde ara" />
+      </div>
+
+      <ul id="taskList" class="task-list" aria-live="polite"></ul>
+
+      <div class="tasks-foot">
+        <span id="footInfo" class="sub"></span>
+        <button id="clearDone" class="btn-ghost" type="button">Tamamlananları temizle</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Hava verisi <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> tarafından sağlanır · Görevler tarayıcında (localStorage) saklanır</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
